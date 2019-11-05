@@ -1,0 +1,37 @@
+<HTML>
+
+        <input type = "Button" value = "Buildcity" onclick ="citybuild()">
+        <input type = "text" id = "citysize">
+        <input type = "text" id = "cityname">
+
+        <Script>
+        function citybuild(){
+            var cityname2 = window.document.getElementById("cityname").value;
+            var citysize2 = window.document.getElementById("citysize").value;
+            for (i = 0; i < 10000; i=i+1) {
+            var span = document.createElement("span");
+            span.innerHTML = ".";
+            span.style.position="absolute";
+            var leftpos = Math.random();
+            var rightpos = Math.random();
+            if((Math.pow(leftpos-0.5,2)+Math.pow(rightpos-0.5,2))<0.25*(citysize2/10000000)){
+            leftpos=50+200*leftpos;
+            rightpos=50+200*rightpos;
+            span.style.top = leftpos;
+            span.style.left= rightpos;
+            }
+            else{
+            leftpos=150;
+            rightpos=150;
+            span.style.top = leftpos;
+            span.style.left= rightpos;
+            }
+            document.body.appendChild(span);
+            }
+            var city = document.createElement("span");
+            city.innerHTML = cityname2;
+            document.body.appendChild(city).style="position:absolute;left:125px;top:260px";
+        }
+        </script>
+
+</HTML>

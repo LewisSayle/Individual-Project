@@ -1,0 +1,205 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<Body onKeyDown = "citybuild()">
+
+  <div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <input type = "text" placeholder="City Name" id = "cityname">
+            <input type = "number" placeholder="Population" id = "citysize" max=999999>
+            <input type = "text" placeholder="City Name 2" id = "cityname20">
+            <input type = "number" placeholder="Population 2" id = "citysize20" max=999999>
+            <div id="dots" style="display: block; height: 300;">
+            </div>
+        </div>
+      <div class="col-12 col-md-6">
+          <input type="Button" class="btn" value="Randompop" onclick="printrandom()">
+          <input class="btn btn-light" type="Button" value="Bigbutton" onclick="displaymessage()"><BR>
+          <Form onsubmit="return checkvalues(this)">
+            city: &#160 &#160 &#160 &#160 &#160 &#160<input type="Text" id="cityinput" Name="city1"><BR>
+            population: <input type="Text" id="populationinput" Name="population1"><BR>
+            region: &#160&#160 &#160 &#160 <input type="Text" id="regioninput" Name="region1"><BR>
+          </Form>
+        
+          <button class="btn btn-danger" onclick="deletecity5()">Delete</button>
+          <button class="btn btn-warning" onclick="request()">Update</button>
+          <input type="button" class="btn btn-primary" value="Show All Records" onclick="requestshowall()">
+          <BR>
+        
+          <table class="border w-75 p-3 m-3">
+        
+            <thead>
+              <tr>
+                <th>City</th>
+                <th>Population</th>
+                <th>Region</th>
+              </tr>
+            </thead>
+            <tbody id="cities-collection">
+            </tbody>
+          </table>
+      </div>
+     
+    </div>
+  </div>
+ 
+
+
+  <script>
+
+    function request() {
+      console.log("helloo");
+      const Http = new XMLHttpRequest();
+      const url = 'http://' + location.hostname + ':9001/saveData';
+      Http.open("POST", url, true);
+      Http.setRequestHeader("Content-Type", "application/json");
+      var city2 = window.document.getElementById("cityinput").value;
+      var population2 = window.document.getElementById("populationinput").value;
+      var region2 = window.document.getElementById("regioninput").value;
+      const cityentry = {
+        'city': city2,
+        'population': population2,
+        'region': region2
+      };
+      Http.onload = function (ev) {
+        requestshowall();
+      }
+      Http.send(JSON.stringify(cityentry));
+    }
+
+
+    function displaymessage() {
+      alert("Hello My Friends")
+    }
+
+    function renderToScreen(data) {
+      var A = 0;
+      let collection = document.getElementById("cities-collection");
+      collection.innerHTML = "";
+      console.log("length:" + data.length);
+      data.forEach(function (item) {
+        var i;
+        let row = document.createElement("tr");
+        var city = document.createElement("td");
+        var population = document.createElement("td");
+        var region = document.createElement("td");
+        city.innerText = item.city;
+        population.innerText = item.population;
+        region.innerText = item.region;
+        row.appendChild(city);
+        row.appendChild(population);
+        row.appendChild(region);
+        collection.appendChild(row)
+        A = A + 1;
+        console.log(A);
+      });
+    }
+
+    function requestshowall() {
+      console.log("helloo");
+      const Http = new XMLHttpRequest();
+      const url = 'http://' + location.hostname + ':9001/showall';
+      Http.open("GET", url);
+      Http.onload = function (e) {
+
+        data = JSON.parse(Http.responseText);
+        renderToScreen(data);
+
+      }
+      Http.send();
+    }
+
+    requestshowall();
+
+    function deletecity5() {
+      const city3 = document.getElementById("cityinput").value;
+      const http = new XMLHttpRequest();
+      const url = 'http://' + location.hostname + ':9001/deletecity/' + city3;
+      http.open("DELETE", url);
+      http.onload = function () {
+        requestshowall();
+      }
+      http.send();
+    }
+
+    function printrandom() {
+      window.document.getElementById("populationinput").value = 1000 * Math.round(Math.pow(10, 4 * (Math.random())));
+    }
+
+    function citybuild(){
+      if(event.keyCode == 32){
+        var cityname2 = window.document.getElementById("cityname").value;
+        var citysize2 = window.document.getElementById("citysize").value;
+        let dots = document.getElementById("dots");
+        for (i = 0; i < 50; i=i+1) {
+        var span = document.createElement("span");
+        span.innerHTML = ".";
+        span.style.position="absolute";
+        var leftpos = Math.random();
+        var rightpos = Math.random();
+        if((Math.pow(leftpos-0.5,2)+Math.pow(rightpos-0.5,2))<0.25*(citysize2/10000000)){
+        leftpos=50+200*leftpos;
+        rightpos=200*rightpos;
+        span.style.top = leftpos;
+        span.style.left= rightpos;
+        }
+        else{
+        leftpos=150;
+        rightpos=150;
+        span.style.top = leftpos;
+        span.style.left= rightpos;
+        }
+        dots.appendChild(span);
+        }
+        var city = document.createElement("span");
+        city.innerHTML = cityname2;
+        dots.appendChild(city).style="position:absolute;left:75px;top:250px";
+
+        var cityname20 = window.document.getElementById("cityname20").value;
+        var citysize20 = window.document.getElementById("citysize20").value;
+        for (i = 0; i < 50; i=i+1) {
+        var span = document.createElement("span");
+        span.innerHTML = ".";
+        span.style.position="absolute";
+        var leftpos = Math.random();
+        var rightpos = Math.random();
+        if((Math.pow(leftpos-0.5,2)+Math.pow(rightpos-0.5,2))<0.25*(citysize20/10000000)){
+        leftpos=50+200*leftpos;
+        rightpos=300+200*rightpos;
+        span.style.top = leftpos;
+        span.style.left= rightpos;
+        }
+        else{
+        leftpos=150;
+        rightpos=150;
+        span.style.top = leftpos;
+        span.style.left= rightpos;
+        }
+        document.body.appendChild(span);
+        }
+        var city20 = document.createElement("span");
+        city20.innerHTML = cityname20;
+        dots.appendChild(city20).style="position:absolute;left:375px;top:250px";
+    }
+    }
+    </script>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

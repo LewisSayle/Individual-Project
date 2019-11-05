@@ -1,0 +1,105 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+
+<input type="Button" value="Randompop" onclick="printrandom()">
+<input style="background-color:white" type="Button" value="Bigbutton" onclick="displaymessage()"><BR>
+<Form onsubmit="return checkvalues(this)">
+	city: &#160 &#160 &#160 &#160 &#160 &#160<input type="Text" id="cityinput" Name="city1"><BR>
+	population: <input type="Text" id="populationinput" Name="population1"><BR>
+	region: &#160&#160 &#160 &#160 <input type="Text" id="regioninput" Name="region1"><BR>
+</Form>
+
+<button onclick="deletecity5()">delete</button>
+<button onclick="request()">update</button>
+<input type="button" value="Show All Records" onclick="requestshowall()">
+<BR>
+<B>
+	City &#160 &#160 &#160 &#160 &#160 &#160 &#160 Population &#160 Region
+</B>
+
+
+<script>
+
+	function request() {
+		console.log("helloo");
+		const Http = new XMLHttpRequest();
+		const url = 'http://localhost:9001/saveData';
+		Http.open("POST", url, true);
+		Http.setRequestHeader("Content-Type", "application/json");
+		var city2 = window.document.getElementById("cityinput").value;
+		var population2 = window.document.getElementById("populationinput").value;
+		var region2 = window.document.getElementById("regioninput").value;
+		const cityentry = {
+			'city': city2,
+			'population': population2,
+			'region': region2
+		};
+		Http.onload = function (ev) {
+			requestshowall();
+		}
+		Http.send(JSON.stringify(cityentry));
+	}
+
+
+	function displaymessage() {
+		alert("Hello My Friends")
+	}
+
+  function renderToScreen(data){ 
+    var A = 0;
+			console.log("length:" + data.length);
+			data.forEach(function (item) {
+				var i;
+				var newparagraph = document.createElement("P");
+				var city = document.createElement("span");
+				var population = document.createElement("span");
+				var region = document.createElement("span");
+				city.innerHTML = item.city + " ";
+				population.innerHTML = item.population + " ";
+				region.innerHTML = item.region + " ";
+				document.body.appendChild(newparagraph);
+				document.body.appendChild(city);
+				document.body.appendChild(population).style = "position:absolute;left:98px";
+				document.body.appendChild(region).style = "position:absolute;left:185px";
+				A = A + 1;
+				console.log(A);
+			});
+  }
+
+	function requestshowall() {
+		console.log("helloo");
+		const Http = new XMLHttpRequest();
+		const url = 'http://localhost:9001/showall';
+		Http.open("GET", url);
+		Http.onload = function (e) {
+
+			data = JSON.parse(Http.responseText);
+      renderToScreen(data);
+			
+	}
+	Http.send();
+	}
+
+  requestshowall();
+
+	function deletecity5() {
+		const city3 = document.getElementById("cityinput").value;
+		const http = new XMLHttpRequest();
+		const url = 'http://localhost:9001/deletecity/' + city3;
+		http.open("DELETE", url);
+    http.onload = function () {
+      requestshowall();
+    }
+		http.send();
+	}
+
+	function printrandom() {
+		window.document.getElementById("populationinput").value = 1000 * Math.round(Math.pow(10, 4 * (Math.random())));
+	}
+
+</script>
+</body>
+</html>
